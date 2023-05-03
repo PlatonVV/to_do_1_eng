@@ -21,8 +21,12 @@ export const Todolist: React.FC<PropsType> = ({title, tasks}) => {
         <ul>
             {tasks.map((el) => {
                 return (
-                    <li><input type="checkbox" checked={el.isDone}/> <span>{el.title}</span></li>
-                )
+                    <li>
+                        <button onClick={()=> console.log('click')}>X</button>
+                        <input type="checkbox" checked={el.isDone}/>
+                        <span>{el.title}</span>
+                    </li>
+                );
             })}
 
         </ul>
@@ -31,5 +35,5 @@ export const Todolist: React.FC<PropsType> = ({title, tasks}) => {
             <button>Active</button>
             <button>Completed</button>
         </div>
-    </div>
-}
+    </div>;
+};
