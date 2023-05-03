@@ -22,7 +22,6 @@ export const Todolist: React.FC<PropsType> = ({title, tasks}) => {
             {tasks.map((el) => {
                 return (
                     <li>
-                        <button onClick={()=> console.log('click')}>X</button>
                         <input type="checkbox" checked={el.isDone}/>
                         <span>{el.title}</span>
                     </li>
