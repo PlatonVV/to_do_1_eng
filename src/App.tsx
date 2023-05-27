@@ -13,8 +13,12 @@ function App() {
     ]);
     const [filter, setFiler] = useState<FilterTasksType>('All');
 
+    const changeStatus = (taskId: string, newIsDone: boolean) => {
+        setTasks(tasks.map(el=> el.id === taskId ? {...el ,isDone: newIsDone} : el))
+    }
+
     const addTask = (title: string) => {
-        let newTask = {id: v1(), title: title, isDone: true};
+        let newTask = {id: v1(), title: title, isDone: false};
         setTasks([...tasks, newTask]);
 
     };
@@ -41,6 +45,7 @@ function App() {
                       removeTasks={removeTasks}
                       changeFilter={changeFilter}
                       addTask={addTask}
+                      changeStatus={changeStatus}
             />
         </div>
     );

@@ -1,5 +1,6 @@
-import React, {useState, KeyboardEvent} from 'react';
+import React, {useState, KeyboardEvent, ChangeEvent} from 'react';
 import {FilterTasksType} from './App';
+import s from './Todolist.module.css'
 
 type TaskType = {
     id: string
@@ -12,49 +13,64 @@ type PropsType = {
     changeFilter: (value: FilterTasksType) => void
     removeTasks: (taskId: string) => void
     addTask: (title: string) => void
+    changeStatus: (taskId: string, newIsDone: boolean) => void
 }
 
 export function Todolist(props: PropsType) {
     const [title, setTitle] = useState('');
+    const [error, setError] = useState(false)
+    const [buttonName, setButtonName] = useState<FilterTasksType>('All')
 
     const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        setError(false)
         if (e.key === 'Enter') {
             addTaskHandler();
         }
     };
     const addTaskHandler = () => {
-        props.addTask(title);
-        setTitle('');
+        if (title.trim() !== '') {
+            props.addTask(title.trim());
+            setTitle('');
+        } else {
+            setError(true)
+        }
     };
     const removeTaskHandler = (taskId: string) => {
         props.removeTasks(taskId);
     };
     const tsarFilter = (value: FilterTasksType) => {
         props.changeFilter(value);
+        setButtonName(value)
+    };
+    const onChangeStatusHadler = (taskId: string, e: ChangeEvent<HTMLInputElement>) => {
+        props.changeStatus(taskId, e.currentTarget.checked);
     };
 
     return <div>
         <h3>{props.title}</h3>
         <div>
-            <input onKeyDown={onKeyDownHandler} value={title} onChange={(e) => {
+            <input className={error ? s.error : ''} onKeyDown={onKeyDownHandler} value={title} onChange={(e) => {
                 setTitle(e.currentTarget.value);
             }}/>
             <button onClick={addTaskHandler}>+</button>
+            {error && <div className={s.errorMessage}>Title is requiared</div>}
         </div>
         <ul>
             {props.tasks.map(el => {
-                return <li key={el.id}>
+                return <li key={el.id} className={el.isDone ? s.isDone : ''}>
                     <button onClick={() => removeTaskHandler(el.id)}>X</button>
-                    <input type="checkbox" checked={el.isDone}/>
+                    <input type="checkbox" checked={el.isDone}
+                           onChange={(e) => onChangeStatusHadler(el.id, e)}
+                    />
                     <span>{el.title}
                     </span>
                 </li>;
             })}
         </ul>
         <div>
-            <button onClick={() => tsarFilter('All')}>All</button>
-            <button onClick={() => tsarFilter('Active')}>Active</button>
-            <button onClick={() => tsarFilter('Completed')}>Completed</button>
+            <button className={buttonName === 'All' ? s.activeFilter : ''} onClick={() => tsarFilter('All')}>All</button>
+            <button className={buttonName === 'Active' ? s.activeFilter : ''} onClick={() => tsarFilter('Active')}>Active</button>
+            <button className={buttonName === 'Completed' ? s.activeFilter : ''} onClick={() => tsarFilter('Completed')}>Completed</button>
         </div>
     </div>;
 }
