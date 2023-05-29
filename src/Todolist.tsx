@@ -8,9 +8,10 @@ type TaskType = {
     isDone: boolean
 }
 type PropsType = {
+    toDoListId: string
     title: string
     tasks: Array<TaskType>
-    changeFilter: (value: FilterTasksType) => void
+    changeFilter: (toDoListId: string,value: FilterTasksType) => void
     removeTasks: (taskId: string) => void
     addTask: (title: string) => void
     changeStatus: (taskId: string, newIsDone: boolean) => void
@@ -38,8 +39,8 @@ export function Todolist(props: PropsType) {
     const removeTaskHandler = (taskId: string) => {
         props.removeTasks(taskId);
     };
-    const tsarFilter = (value: FilterTasksType) => {
-        props.changeFilter(value);
+    const tsarFilter = (toDoListId: string, value: FilterTasksType) => {
+        props.changeFilter(props.toDoListId,value);
         setButtonName(value)
     };
     const onChangeStatusHadler = (taskId: string, e: ChangeEvent<HTMLInputElement>) => {
@@ -68,9 +69,9 @@ export function Todolist(props: PropsType) {
             })}
         </ul>
         <div>
-            <button className={buttonName === 'All' ? s.activeFilter : ''} onClick={() => tsarFilter('All')}>All</button>
-            <button className={buttonName === 'Active' ? s.activeFilter : ''} onClick={() => tsarFilter('Active')}>Active</button>
-            <button className={buttonName === 'Completed' ? s.activeFilter : ''} onClick={() => tsarFilter('Completed')}>Completed</button>
+            <button className={buttonName === 'All' ? s.activeFilter : ''} onClick={() => tsarFilter(props.toDoListId,'All')}>All</button>
+            <button className={buttonName === 'Active' ? s.activeFilter : ''} onClick={() => tsarFilter(props.toDoListId,'Active')}>Active</button>
+            <button className={buttonName === 'Completed' ? s.activeFilter : ''} onClick={() => tsarFilter(props.toDoListId,'Completed')}>Completed</button>
         </div>
     </div>;
 }
