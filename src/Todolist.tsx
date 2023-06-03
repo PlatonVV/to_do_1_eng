@@ -1,66 +1,70 @@
-import React, {useState, KeyboardEvent, ChangeEvent} from 'react';
+import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {FilterTasksType} from './App';
-import s from './Todolist.module.css'
+import s from './Todolist.module.css';
 
-type TaskType = {
+export type TaskType = {
     id: string
     title: string
     isDone: boolean
 }
 type PropsType = {
-    title: string
+    toDoId: string
+    ToDoTitle: string
     tasks: Array<TaskType>
-    changeFilter: (value: FilterTasksType) => void
-    removeTasks: (taskId: string) => void
-    addTask: (title: string) => void
-    changeStatus: (taskId: string, newIsDone: boolean) => void
+    changeFilter: (toDoId: string, value: FilterTasksType) => void
+    removeTasks: (toDoId: string, taskId: string) => void
+    addTask: (toDoId: string, title: string) => void
+    changeStatus: (toDoId: string, taskId: string, newIsDone: boolean) => void
 }
 
-export function Todolist(props: PropsType) {
+export const Todolist: React.FC<PropsType> = ({
+                                                  toDoId, ToDoTitle, tasks,
+                                                  changeStatus, addTask, removeTasks, changeFilter
+                                              }) => {
     const [title, setTitle] = useState('');
-    const [error, setError] = useState(false)
-    const [buttonName, setButtonName] = useState<FilterTasksType>('All')
+    const [error, setError] = useState(false);
+    const [buttonName, setButtonName] = useState<FilterTasksType>('All');
 
     const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(false)
+        setError(false);
         if (e.key === 'Enter') {
             addTaskHandler();
         }
     };
     const addTaskHandler = () => {
         if (title.trim() !== '') {
-            props.addTask(title.trim());
+            addTask(toDoId, title.trim());
             setTitle('');
         } else {
-            setError(true)
+            setError(true);
         }
     };
     const removeTaskHandler = (taskId: string) => {
-        props.removeTasks(taskId);
+        removeTasks(toDoId, taskId);
     };
     const tsarFilter = (value: FilterTasksType) => {
-        props.changeFilter(value);
-        setButtonName(value)
+        changeFilter(toDoId, value);
+        setButtonName(value);
     };
-    const onChangeStatusHadler = (taskId: string, e: ChangeEvent<HTMLInputElement>) => {
-        props.changeStatus(taskId, e.currentTarget.checked);
+    const onChangeStatusHandler = (taskId: string, e: ChangeEvent<HTMLInputElement>) => {
+        changeStatus(toDoId, taskId, e.currentTarget.checked);
     };
 
     return <div>
-        <h3>{props.title}</h3>
+        <h3>{title}</h3>
         <div>
             <input className={error ? s.error : ''} onKeyDown={onKeyDownHandler} value={title} onChange={(e) => {
                 setTitle(e.currentTarget.value);
             }}/>
             <button onClick={addTaskHandler}>+</button>
-            {error && <div className={s.errorMessage}>Title is requiared</div>}
+            {error && <div className={s.errorMessage}>Title is required</div>}
         </div>
         <ul>
-            {props.tasks.map(el => {
+            {tasks.map(el => {
                 return <li key={el.id} className={el.isDone ? s.isDone : ''}>
                     <button onClick={() => removeTaskHandler(el.id)}>X</button>
                     <input type="checkbox" checked={el.isDone}
-                           onChange={(e) => onChangeStatusHadler(el.id, e)}
+                           onChange={(e) => onChangeStatusHandler(el.id, e)}
                     />
                     <span>{el.title}
                     </span>
@@ -68,9 +72,14 @@ export function Todolist(props: PropsType) {
             })}
         </ul>
         <div>
-            <button className={buttonName === 'All' ? s.activeFilter : ''} onClick={() => tsarFilter('All')}>All</button>
-            <button className={buttonName === 'Active' ? s.activeFilter : ''} onClick={() => tsarFilter('Active')}>Active</button>
-            <button className={buttonName === 'Completed' ? s.activeFilter : ''} onClick={() => tsarFilter('Completed')}>Completed</button>
+            <button className={buttonName === 'All' ? s.activeFilter : ''} onClick={() => tsarFilter('All')}>All
+            </button>
+            <button className={buttonName === 'Active' ? s.activeFilter : ''}
+                    onClick={() => tsarFilter('Active')}>Active
+            </button>
+            <button className={buttonName === 'Completed' ? s.activeFilter : ''}
+                    onClick={() => tsarFilter('Completed')}>Completed
+            </button>
         </div>
     </div>;
-}
+};
