@@ -17,6 +17,7 @@ type PropsType = {
 }
 
 export function Todolist(props: PropsType) {
+
     const [title, setTitle] = useState('');
     const [error, setError] = useState(false)
     const [buttonName, setButtonName] = useState<FilterTasksType>('All')
